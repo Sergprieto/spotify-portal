@@ -3,7 +3,6 @@ import { ethers } from 'ethers';
 import styles from './App.module.css'
 import * as waveArtifacts from './utils/WavePortal.json'
 import { Web3Provider } from "@ethersproject/providers";
-import { time, timeStamp } from "console";
 
 interface waveMessage {
   address: string,
@@ -12,7 +11,7 @@ interface waveMessage {
 }
 
 const App = () => {
-  const contractAddress: any = "0x559499A426921Ed4830E3aF1d7e165a92d56bdA2";
+  const contractAddress: any = "0xc87974C4e3C86b0b2D1d15c2DB7d8c097ba34Eb4";
   const contractABI = waveArtifacts.abi;
 
   const [currAccount, setCurrentAccount] = useState(' ');
@@ -39,13 +38,19 @@ const App = () => {
 
     setAllWaves(wavesCleaned);
 
-    waveportalContract.on("NewWave", (from, timeStamp, message) => {
-      console.log("NewWave", from, timeStamp, message)
+    waveportalContract.on("NewWave", (from, timest, msg) => {
+      console.log("NewWave", from, timest, msg)
       setAllWaves(oldArray => [...oldArray, {
         address: from,
-        timestamp: new Date(timeStamp * 1000),
-        message: message
+        timestamp: new Date(timest * 1000),
+        message: msg
       }])
+    })
+
+    waveportalContract.on("winnerWinner", (from, time) => {
+      console.log("We got a winner!", from, time)
+      const date = new Date(time * 1000)
+      alert("A winner has been selected! They are: " + from + " and they won at " + date + " give it up for them!");
     })
   }
 
