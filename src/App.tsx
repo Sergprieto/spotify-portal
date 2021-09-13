@@ -71,7 +71,6 @@ const App = () => {
           console.log('Found an authorized account: ', account)
 
           setCurrentAccount(account);
-          getAllWaves();
         } else {
           console.log('No authorized account found');
         }
@@ -88,6 +87,7 @@ const App = () => {
       .then((accounts: any) => {
         console.log('Connected', accounts[0]);
         setCurrentAccount(accounts[0]);
+        getAllWaves();
       })
       .catch((err: Error) => console.log(err))
     } else {
@@ -114,13 +114,22 @@ const App = () => {
 
   useEffect(() => {
     checkIfWalletIsConnected()
-  }, []);
+  }, [currAccount]);
 
-  const showConnectWallet = currAccount ? '' : (
-          <button className={styles.waveButton} onClick={connectWallet}>
-            Connect Wallet
-          </button>
-  );
+  const showConnectForm = currAccount ? (
+    <form>
+      <input type="text" 
+        id="message" 
+        placeholder="Enter a message!" 
+        value={message} 
+        onChange={e => setMessage(e.target.value)}
+      />
+    </form>
+  ) : (
+    <button className={styles.waveButton} onClick={connectWallet}>
+      Connect Wallet
+    </button>
+  )
   
   return (
     <div className={styles.mainContainer}>
@@ -144,16 +153,8 @@ const App = () => {
           Wave at Me
         </button>
 
-        {showConnectWallet}
+        {showConnectForm}
 
-        <form>
-          <input type="text" 
-            id="message" 
-            placeholder="Enter a message!" 
-            value={message} 
-            onChange={e => setMessage(e.target.value)}
-          />
-        </form>
 
         {allWaves.map((wave, index) => {
           return (
