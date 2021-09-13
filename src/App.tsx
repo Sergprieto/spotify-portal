@@ -1,6 +1,6 @@
 import * as React from "react";
 // import { ethers } from "ethers";
-import './App.css';
+import styles from './App.module.css'
 
 const App = () => {
 
@@ -9,18 +9,19 @@ const App = () => {
   }
   
   return (
-    <div className="mainContainer">
+    <div className={styles.mainContainer}>
 
-      <div className="dataContainer">
-        <div className="header">
+      <div className={styles.dataContainer}>
+        <div className={styles.header}>
         👋 Hey there!
         </div>
 
-        <div className="bio">
-        I am farza and I worked on self-driving cars so that's pretty cool right? Connect your Ethereum wallet and wave at me!
+        <div className={styles.bio}>
+        I am Sergio and I am in my last semester of my Software Engineering degree! Connect your etherium wallet and 
+        link me your favorite spotify music!
         </div>
 
-        <button className="waveButton" onClick={wave}>
+        <button className={styles.waveButton} onClick={wave}>
           Wave at Me
         </button>
       </div>
