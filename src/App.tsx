@@ -14,7 +14,7 @@ const App = () => {
   const contractAddress: any = "0xc87974C4e3C86b0b2D1d15c2DB7d8c097ba34Eb4";
   const contractABI = waveArtifacts.abi;
 
-  const [currAccount, setCurrentAccount] = useState(' ');
+  const [currAccount, setCurrentAccount] = useState('');
   const [message, setMessage] = useState('');
   const [allWaves, setAllWaves] = useState<waveMessage[]>([]);
 
@@ -144,6 +144,8 @@ const App = () => {
           Wave at Me
         </button>
 
+        {showConnectWallet}
+
         <form>
           <input type="text" 
             id="message" 
@@ -152,8 +154,6 @@ const App = () => {
             onChange={e => setMessage(e.target.value)}
           />
         </form>
-
-        {showConnectWallet}
 
         {allWaves.map((wave, index) => {
           return (
