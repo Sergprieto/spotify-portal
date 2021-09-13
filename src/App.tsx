@@ -2,12 +2,43 @@ import { useState, useEffect } from "react";
 import { ethers } from 'ethers';
 import styles from './App.module.css'
 import * as waveArtifacts from './utils/WavePortal.json'
+import { Web3Provider } from "@ethersproject/providers";
+
+interface waveMessage {
+  address: string,
+  timestamp: Date,
+  message: string,
+}
 
 const App = () => {
-  const contractAddress: any = "0xD98C2bcE96827944d741F55BeFd372bc60208d61";
+  const contractAddress: any = "0x2f3416e61Da6Ca440b15d9bBF06329c065596beb";
   const contractABI = waveArtifacts.abi;
 
   const [currAccount, setCurrentAccount] = useState(' ');
+  const [message, setMessage] = useState('');
+  const [allWaves, setAllWaves] = useState<waveMessage[]>([]);
+
+  const getAllWaves = async () => {
+    const provider: Web3Provider = 
+      new ethers.providers.Web3Provider((window as any).ethereum);
+    const signer = provider.getSigner();
+    const waveportalContract = new ethers.Contract(contractAddress, contractABI, signer);
+
+    let waves: any[] = await waveportalContract.getAllWaves();
+
+    let wavesCleaned: waveMessage[] = [];
+
+    waves.forEach(wave => {
+      wavesCleaned.push({
+        address: wave.waver,
+        timestamp: new Date(wave.timestamp * 1000),
+        message: wave.message
+      })
+    });
+
+    setAllWaves(wavesCleaned);
+  }
+
 
   const checkIfWalletIsConnected = () => {
     //First make sure we have access to window.ethereum
@@ -25,6 +56,7 @@ const App = () => {
           console.log('Found an authorized account: ', account)
 
           setCurrentAccount(account);
+          getAllWaves();
         } else {
           console.log('No authorized account found');
         }
@@ -56,18 +88,23 @@ const App = () => {
     let count = await waveportalContract.getTotalWaves();
     console.log('Retrieved total wave count...', count.toNumber());
 
-    const waveTxn: any = await waveportalContract.wave()
+    const waveTxn: any = await waveportalContract.wave(message)
     console.log('Mining...', waveTxn.hash);
     await waveTxn.wait();
     console.log('Mined -- ', waveTxn.hash);
 
     count = await waveportalContract.getTotalWaves()
     console.log('Retrieved total wave count', count.toNumber());
+
+    await getAllWaves();
   }
 
   useEffect(() => {
     checkIfWalletIsConnected()
   }, []);
+
+  useEffect(() => {
+  }, [allWaves])
 
   const showConnectWallet = currAccount ? '' : (
           <button className={styles.waveButton} onClick={connectWallet}>
@@ -92,7 +129,26 @@ const App = () => {
           Wave at Me
         </button>
 
+        <form>
+          <input type="text" 
+            id="message" 
+            placeholder="Enter a message!" 
+            value={message} 
+            onChange={e => setMessage(e.target.value)}
+          />
+        </form>
+
         {showConnectWallet}
+
+        {allWaves.map((wave, index) => {
+          return (
+            <div key={index} style={{backgroundColor: "OldLace", marginTop: "16px", padding: "8px"}}> 
+              <div>Address: {wave.address}</div>
+              <div>Time: {wave.timestamp.toString()} </div>
+              <div>Message: {wave.message} </div>
+            </div>
+          )
+        })}
       </div>
     </div>
   );
