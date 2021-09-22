@@ -1,25 +1,32 @@
 import { useState, useEffect } from "react";
-import { ethers } from 'ethers';
 import styles from './App.module.css'
-import { Web3Provider } from "@ethersproject/providers";
-import { WaveMessage, wave, getAllWaves, checkIfWalletIsConnected, connectWallet } from '../utils/contract'
-
+import { wave, getAllWaves, connectWallet } from '../utils/contractConnection'
 
 
 const App = () => {
 
   const [currAccount, setCurrentAccount] = useState('');
   const [message, setMessage] = useState('');
-  const [allWaves, setAllWaves] = useState<WaveMessage[]>([]);
+  const [allWaves, setAllWaves] = useState<any[]>([]);
 
 
+  const connectWalletHandler = async () => {
+    const walletArr = await connectWallet();
+    if (walletArr) {
+      setCurrentAccount(walletArr);
+      loadInitWaves();
+    }
+  }
 
+  const loadInitWaves = async () => {
+      const initialWaves = await getAllWaves();
+      setAllWaves(initialWaves);
+  }
 
 
   useEffect(() => {
-    document.title = "Sergio's Spotify Portal"
-    checkIfWalletIsConnected()
-  }, [currAccount]);
+    document.title = "Sergio's Spotify Portal";
+  }, []);
 
   const showConnectForm = currAccount ? (
     <form>
@@ -31,7 +38,7 @@ const App = () => {
       />
     </form>
   ) : (
-    <button className={styles.waveButton} onClick={connectWallet}>
+    <button className={styles.waveButton} onClick={connectWalletHandler}>
       Connect Wallet
     </button>
   )
@@ -54,7 +61,7 @@ const App = () => {
         Soon you will be able to connect your etherium wallet and link me your favorite spotify music!
         </div>
 
-        <button className={styles.waveButton} onClick={wave(message)}>
+        <button className={styles.waveButton} onClick={() => wave(message)}>
           Wave at Me
         </button>
 
@@ -69,7 +76,7 @@ const App = () => {
               <div>Message: {wave.message} </div>
             </div>
           )
-        })}
+        })} 
       </div>
     </div>
   );
