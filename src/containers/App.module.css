@@ -24,11 +24,24 @@
   margin-top: 16px;
 }
 
-.waveButton {
+.draftButton {
   cursor: pointer;
   margin-top: 16px;
   padding: 8px;
   border: 0;
   border-radius: 5px;
-  
+}
+
+.draftArea {
+  padding: 8px;
+  border-radius: 5px;
+  margin-top: 16px;
+  background-color: snow;
+  resize: none;
+}
+
+.message {
+  background-color: palegreen;
+  margin-top: 16px;
+  padding: 8px;
 }

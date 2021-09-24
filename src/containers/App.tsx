@@ -1,23 +1,27 @@
 import { useState, useEffect } from 'react'
 import styles from './App.module.css'
-import { wave, getAllWaves, connectWallet } from '../utils/contractConnection'
+import {
+  sendMessage,
+  getAllMessages,
+  connectWallet
+} from '../utils/contractConnection'
 
 const App = () => {
   const [currAccount, setCurrentAccount] = useState('')
-  const [message, setMessage] = useState('')
-  const [allWaves, setAllWaves] = useState<any[]>([])
+  const [draft, setDraft] = useState('')
+  const [allMessages, setAllMessages] = useState<any[]>([])
 
   const connectWalletHandler = async () => {
     const walletArr = await connectWallet()
     if (walletArr) {
       setCurrentAccount(walletArr)
-      loadInitWaves()
+      loadInitMessages()
     }
   }
 
-  const loadInitWaves = async () => {
-    const initialWaves = await getAllWaves()
-    setAllWaves(initialWaves)
+  const loadInitMessages = async () => {
+    const initialMessages = await getAllMessages()
+    setAllMessages(initialMessages)
   }
 
   useEffect(() => {
@@ -25,20 +29,28 @@ const App = () => {
   }, [])
 
   const showConnectForm = currAccount ? (
-    <form>
-      <input
-        type='text'
-        id='message'
-        placeholder='Enter a message!'
-        value={message}
-        onChange={e => setMessage(e.target.value)}
-      />
-    </form>
+    <textarea className={styles.draftArea}
+      id='message'
+      placeholder='Enter a message!'
+      value={draft}
+      onChange={e => setDraft(e.target.value)}
+    />
   ) : (
-    <button className={styles.waveButton} onClick={connectWalletHandler}>
+    <button className={styles.draftButton} onClick={connectWalletHandler}>
       Connect Wallet
     </button>
   )
+
+  //Formats all messages to 
+  const messageList = allMessages.map((message, index) => {
+    return (
+      <div key={index} className={styles.message}>
+        <div>Address: {message.address}</div>
+        <div>Time: {message.timestamp.toString()} </div>
+        <div>Message: {message.message} </div>
+      </div>
+    )
+  })
 
   return (
     <div className={styles.mainContainer}>
@@ -48,39 +60,21 @@ const App = () => {
         <div className={styles.bio}>
           <h1>
             I am Sergio and I am in my last semester of my Software Engineering
-            degree!
+            degree! This is my first project involving Web3 and Solidity!
           </h1>
-          <br />
-          For now, all you can do is wave at me and maybe win some sick fake
-          ethereum. <br />
-          But I do enjoy the messages 🙂
-          <br />
-          Soon you will be able to connect your etherium wallet and link me your
-          favorite spotify music!
+          Link your ethereum wallet and send me your favorite spotify music!
         </div>
 
-        <button className={styles.waveButton} onClick={() => wave(message)}>
-          Wave at Me
+        <button
+          className={styles.draftButton}
+          onClick={() => sendMessage(draft)}
+        >
+          Send me your favorite Spotify music!
         </button>
 
         {showConnectForm}
 
-        {allWaves.map((wave, index) => {
-          return (
-            <div
-              key={index}
-              style={{
-                backgroundColor: 'OldLace',
-                marginTop: '16px',
-                padding: '8px'
-              }}
-            >
-              <div>Address: {wave.address}</div>
-              <div>Time: {wave.timestamp.toString()} </div>
-              <div>Message: {wave.message} </div>
-            </div>
-          )
-        })}
+        {messageList}
       </div>
     </div>
   )
