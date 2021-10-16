@@ -1,16 +1,19 @@
-import hre from "hardhat"
+import hre from 'hardhat'
 
 const main = async () => {
-
-  const WaveContractFactory = await hre.ethers.getContractFactory("WavePortal");
-  const waveContract = await WaveContractFactory.deploy({value: hre.ethers.utils.parseEther("0.0001")});
-  await waveContract.deployed();
-  console.log("Deploying contracts with the account:", waveContract.address);
+  const SpotifyContractFactory = await hre.ethers.getContractFactory(
+    'SpotifyPortal'
+  )
+  const spotifyContract = await SpotifyContractFactory.deploy({
+    value: hre.ethers.utils.parseEther('0.0001')
+  })
+  await spotifyContract.deployed()
+  console.log('Deploying contracts with the account:', spotifyContract.address)
 }
 
-main() 
+main()
   .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+  .catch(error => {
+    console.error(error)
+    process.exit(1)
+  })

@@ -1,25 +1,38 @@
-import hre from "hardhat"
+import hre from 'hardhat'
 
 const main = async () => {
-  const WaveContractFactory = await hre.ethers.getContractFactory("WavePortal");
-  const waveContract = await WaveContractFactory.deploy({value: hre.ethers.utils.parseEther("0.1")});
-  await waveContract.deployed();
-  console.log("Contract address is:", waveContract.address);
+  const SpotifyContractFactory = await hre.ethers.getContractFactory(
+    'SpotifyPortal'
+  )
+  const spotifyContract = await SpotifyContractFactory.deploy({
+    value: hre.ethers.utils.parseEther('0.1')
+  })
+  await spotifyContract.deployed()
+  console.log('Contract address is:', spotifyContract.address)
 
-  let contractBalance = await hre.ethers.provider.getBalance(waveContract.address);
-  console.log("Contract Balance:", hre.ethers.utils.formatEther(contractBalance));
+  let contractBalance = await hre.ethers.provider.getBalance(
+    spotifyContract.address
+  )
+  console.log(
+    'Contract Balance:',
+    hre.ethers.utils.formatEther(contractBalance)
+  )
 
-  let waveTxn = await waveContract.wave("this is message #1");
-  await waveTxn.wait();
+  let waveTxn = await spotifyContract.wave('this is message #1')
+  await waveTxn.wait()
 
-  contractBalance = await hre.ethers.provider.getBalance(waveContract.address);
-  console.log("Contract Balance:", hre.ethers.utils.formatEther(contractBalance));
-
+  contractBalance = await hre.ethers.provider.getBalance(
+    spotifyContract.address
+  )
+  console.log(
+    'Contract Balance:',
+    hre.ethers.utils.formatEther(contractBalance)
+  )
 }
 
-main() 
+main()
   .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+  .catch(error => {
+    console.error(error)
+    process.exit(1)
+  })
