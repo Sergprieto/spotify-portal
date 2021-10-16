@@ -9,6 +9,7 @@ import {
 const App = () => {
   const [currAccount, setCurrentAccount] = useState('')
   const [draft, setDraft] = useState('')
+  const [name, setName] = useState('')
   const [allMessages, setAllMessages] = useState<any[]>([])
 
   const connectWalletHandler = async () => {
@@ -25,16 +26,23 @@ const App = () => {
   }
 
   useEffect(() => {
-    document.title = "Sergio's Spotify Portal"
+    document.title = "Spotify Portal"
   }, [])
 
   const showConnectForm = currAccount ? (
+    <>
+    <input className={styles.draftArea} 
+      id='name'
+      placeholder='Your Name'
+      value={name}
+      onChange={e => setName(e.target.value)}/>
     <textarea className={styles.draftArea}
       id='message'
-      placeholder='Enter a message!'
+      placeholder='The link to your favorite song on spotify!'
       value={draft}
       onChange={e => setDraft(e.target.value)}
     />
+    </>
   ) : (
     <button className={styles.draftButton} onClick={connectWalletHandler}>
       Connect Wallet
