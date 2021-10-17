@@ -18,8 +18,8 @@ const main = async () => {
     hre.ethers.utils.formatEther(contractBalance)
   )
 
-  let waveTxn = await spotifyContract.wave('this is message #1')
-  await waveTxn.wait()
+  let songTxn = await spotifyContract.addSong('Bob Dole', 'Test URL')
+  await songTxn.wait()
 
   contractBalance = await hre.ethers.provider.getBalance(
     spotifyContract.address

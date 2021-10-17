@@ -3,62 +3,44 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 
 contract SpotifyPortal {
-    uint256 totalWaves;
-    uint256 private seed;
+    uint256 totalSongs;
 
-    event NewWave(address indexed from, uint256 timestamp, string message);
-    event winnerWinner(address indexed from, uint256 timestamp);
+    event newSong(address indexed from, uint256 timestamp, string name, string url);
 
-    struct Wave {
-        address waver;
-        string message;
+    struct Song {
+        address addr;
         uint256 timestamp;
+        string name;
+        string url;
     }
-    Wave[] waves;
+    Song[] songs;
 
-    mapping(address => uint256) public lastWavedAt;
+    mapping(address => uint256) public mostRecentSender;
 
     constructor() payable {
         console.log("Construction complete!");
     }
 
-    function wave(string memory _message) public {
+    function addSong(string memory _name, string memory _url) public {
         require(
-            lastWavedAt[msg.sender] + 1 minutes < block.timestamp,
+            mostRecentSender[msg.sender] + 15 minutes < block.timestamp,
             "Wait 15m"
         );
 
-        lastWavedAt[msg.sender] = block.timestamp;
+        mostRecentSender[msg.sender] = block.timestamp;
 
-        totalWaves += 1;
-        console.log("%s is waved!", msg.sender);
-        waves.push(Wave(msg.sender, _message, block.timestamp));
-        emit NewWave(msg.sender, block.timestamp, _message);
+        totalSongs += 1;
+        console.log("%s at %s account sent us a song at %s url!", _name, msg.sender, _url);
+        songs.push(Song(msg.sender, block.timestamp, _name, _url));
+        emit newSong(msg.sender, block.timestamp, _name, _url);
 
-        uint256 randomNumber = (block.difficulty + block.timestamp + seed) %
-            100;
-        console.log("Random number generated: %s", randomNumber);
-
-        seed = randomNumber;
-
-        if (randomNumber < 50) {
-            console.log("%s won!", msg.sender);
-            uint256 prizeAmount = 0.000001 ether;
-            require(
-                prizeAmount <= address(this).balance,
-                "Trying to withdraw more money than the contract has!"
-            );
-            (bool success, ) = (msg.sender).call{value: prizeAmount}("");
-            require(success, "Failed, to withdraw money from the contract");
-            emit winnerWinner(msg.sender, block.timestamp);
-        }
     }
 
-    function getAllWaves() public view returns (Wave[] memory) {
-        return waves;
+    function getAllSongs() public view returns (Song[] memory) {
+        return songs;
     }
 
-    function getTotalWaves() public view returns (uint256) {
-        return totalWaves;
+    function getTotalSongs() public view returns (uint256) {
+        return totalSongs;
     }
 }

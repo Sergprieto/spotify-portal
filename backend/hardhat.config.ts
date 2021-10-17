@@ -16,7 +16,7 @@ task("accounts", "Prints the list of accounts", async (args, hre) => {
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 
-export default {
+const defaults = {
   solidity: "0.8.4",
   networks: {
     rinkeby: {
@@ -25,3 +25,5 @@ export default {
     },
   },
 };
+
+export default defaults;

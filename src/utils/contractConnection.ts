@@ -7,7 +7,7 @@ export interface ContractMessage {
   message: string
 }
 
-const contractAddress: any = '0xc87974C4e3C86b0b2D1d15c2DB7d8c097ba34Eb4'
+const contractAddress: any = '0x6759d847B645dc3D7e9Cf81e63A8F571Bda255e4'
 const contractABI = spotifyArtifacts.abi
 
 export const connectWallet = async (): Promise<string> => {
