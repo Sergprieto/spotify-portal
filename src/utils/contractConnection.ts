@@ -1,10 +1,11 @@
 import * as spotifyArtifacts from './SpotifyPortal.json'
 import { ethers, Contract } from 'ethers'
 
-export interface ContractMessage {
+export interface SongContract {
   address: string
   timestamp: Date
-  message: string
+  url: string
+  submittedby: string
 }
 
 const contractAddress: any = '0x6759d847B645dc3D7e9Cf81e63A8F571Bda255e4'
@@ -30,55 +31,68 @@ const getSpotifyContract = async (): Promise<Contract> => {
   return new ethers.Contract(contractAddress, contractABI, signer)
 }
 
-export const sendMessage = async (message: string) => {
+export const addSong = async (url: string, submittedby: string) => {
   const spotifyContract = await getSpotifyContract()
 
-  let count = await spotifyContract.getTotalWaves()
+  let count = await spotifyContract.getTotalSongs()
   console.log('Retrieved total message count...', count.toNumber())
 
-  const messageTransaction: any = await spotifyContract.wave(message, {
-    gasLimit: 300000
-  })
+  const messageTransaction: any = await spotifyContract.addSong(
+    submittedby,
+    formatURL(url),
+    {
+      gasLimit: 300000
+    }
+  )
   console.log('Mining...', messageTransaction.hash)
   await messageTransaction.wait()
   console.log('Mined -- ', messageTransaction.hash)
 
-  count = await spotifyContract.getTotalWaves()
-  console.log('Retrieved total message count', count.toNumber())
+  count = await spotifyContract.getTotalSongs()
+  console.log('Retrieved total song count', count.toNumber())
 }
 
-export const getAllMessages = async (): Promise<ContractMessage[]> => {
+const formatURL = (url: string): string => {
+  const queryIndex = url.indexOf('?')
+  if (queryIndex < 0) return url
+
+  return url.slice(0, queryIndex)
+}
+
+export const getAllSongs = async (): Promise<SongContract[]> => {
   const spotifyContract = await getSpotifyContract()
 
-  let messages: any[] = await spotifyContract.getAllWaves()
+  const songs: any[] = await spotifyContract.getAllSongs()
+  console.log(songs)
 
-  const parsedMessaged: ContractMessage[] = []
+  const formatedSongs: SongContract[] = []
 
-  messages.forEach((message) => {
-    parsedMessaged.push({
-      address: message.waver,
-      timestamp: new Date(message.timestamp * 1000),
-      message: message.message
+  songs.forEach(song => {
+    formatedSongs.push({
+      address: song.addr,
+      timestamp: new Date(song.timestamp * 1000),
+      url: song.url,
+      submittedby: song.name
     })
   })
 
-  await listenToContract()
+  // await listenToContract()
 
-  return parsedMessaged
+  return formatedSongs
 }
 
-const listenToContract = async () => {
-  const spotifyContract = await getSpotifyContract()
+// const listenToContract = async () => {
+//   const spotifyContract = await getSpotifyContract()
 
-  spotifyContract.on('winnerWinner', (from, time) => {
-    console.log('We got a winner!', from, time)
-    const date = new Date(time * 1000)
-    alert(
-      'A winner has been selected! They are: ' +
-        from +
-        ' and they won at ' +
-        date +
-        ' give it up for them!'
-    )
-  })
-}
+//   spotifyContract.on('winnerWinner', (from, time) => {
+//     console.log('We got a winner!', from, time)
+//     const date = new Date(time * 1000)
+//     alert(
+//       'A winner has been selected! They are: ' +
+//         from +
+//         ' and they won at ' +
+//         date +
+//         ' give it up for them!'
+//     )
+//   })
+// }

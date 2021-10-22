@@ -1,47 +1,51 @@
 import { useState, useEffect } from 'react'
 import styles from './App.module.css'
 import {
-  sendMessage,
-  getAllMessages,
-  connectWallet
+  addSong,
+  getAllSongs,
+  connectWallet,
+  SongContract
 } from '../utils/contractConnection'
 
 const App = () => {
   const [currAccount, setCurrentAccount] = useState('')
   const [draft, setDraft] = useState('')
   const [name, setName] = useState('')
-  const [allMessages, setAllMessages] = useState<any[]>([])
+  const [allSongs, setAllSongs] = useState<any[]>([])
 
   const connectWalletHandler = async () => {
     const walletArr = await connectWallet()
     if (walletArr) {
       setCurrentAccount(walletArr)
-      loadInitMessages()
+      loadInitSongs()
     }
   }
 
-  const loadInitMessages = async () => {
-    const initialMessages = await getAllMessages()
-    setAllMessages(initialMessages)
+  const loadInitSongs = async () => {
+    const initialSongs = await getAllSongs()
+    setAllSongs(initialSongs)
   }
 
   useEffect(() => {
-    document.title = "Spotify Portal"
+    document.title = 'Spotify Portal'
   }, [])
 
   const showConnectForm = currAccount ? (
     <>
-    <input className={styles.draftArea} 
-      id='name'
-      placeholder='Your Name'
-      value={name}
-      onChange={e => setName(e.target.value)}/>
-    <textarea className={styles.draftArea}
-      id='message'
-      placeholder='The link to your favorite song on spotify!'
-      value={draft}
-      onChange={e => setDraft(e.target.value)}
-    />
+      <input
+        className={styles.draftArea}
+        id='name'
+        placeholder='Your Name'
+        value={name}
+        onChange={e => setName(e.target.value)}
+      />
+      <textarea
+        className={styles.draftArea}
+        id='message'
+        placeholder='The link to your favorite song on spotify!'
+        value={draft}
+        onChange={e => setDraft(e.target.value)}
+      />
     </>
   ) : (
     <button className={styles.draftButton} onClick={connectWalletHandler}>
@@ -49,13 +53,14 @@ const App = () => {
     </button>
   )
 
-  //Formats all messages to 
-  const messageList = allMessages.map((message, index) => {
+  //Formats all songs to
+  const songList = allSongs.map((song: SongContract, index) => {
     return (
       <div key={index} className={styles.message}>
-        <div>Address: {message.address}</div>
-        <div>Time: {message.timestamp.toString()} </div>
-        <div>Message: {message.message} </div>
+        <div>Name of Submitter: {song.submittedby} </div>
+        <div>Address: {song.address}</div>
+        <div>Time: {song.timestamp.toUTCString()} </div>
+        <div>Song URL: {song.url} </div>
       </div>
     )
   })
@@ -73,16 +78,13 @@ const App = () => {
           Link your ethereum wallet and send me your favorite spotify music!
         </div>
 
-        <button
-          className={styles.draftButton}
-          onClick={() => sendMessage(draft)}
-        >
+        <button className={styles.draftButton} onClick={() => addSong(draft, name)}>
           Send me your favorite Spotify music!
         </button>
 
         {showConnectForm}
 
-        {messageList}
+        {songList}
       </div>
     </div>
   )
