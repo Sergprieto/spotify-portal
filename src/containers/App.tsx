@@ -1,85 +1,93 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react'
 import styles from './App.module.css'
-import { wave, getAllWaves, connectWallet } from '../utils/contractConnection'
-
+import {
+  addSong,
+  getAllSongs,
+  connectWallet,
+  SongContract
+} from '../utils/contractConnection'
 
 const App = () => {
-
-  const [currAccount, setCurrentAccount] = useState('');
-  const [message, setMessage] = useState('');
-  const [allWaves, setAllWaves] = useState<any[]>([]);
-
+  const [currAccount, setCurrentAccount] = useState('')
+  const [draft, setDraft] = useState('')
+  const [name, setName] = useState('')
+  const [allSongs, setAllSongs] = useState<any[]>([])
 
   const connectWalletHandler = async () => {
-    const walletArr = await connectWallet();
+    const walletArr = await connectWallet()
     if (walletArr) {
-      setCurrentAccount(walletArr);
-      loadInitWaves();
+      setCurrentAccount(walletArr)
+      loadInitSongs()
     }
   }
 
-  const loadInitWaves = async () => {
-      const initialWaves = await getAllWaves();
-      setAllWaves(initialWaves);
+  const loadInitSongs = async () => {
+    const initialSongs = await getAllSongs()
+    setAllSongs(initialSongs)
   }
 
-
   useEffect(() => {
-    document.title = "Sergio's Spotify Portal";
-  }, []);
+    document.title = 'Spotify Portal'
+  }, [])
 
   const showConnectForm = currAccount ? (
-    <form>
-      <input type="text" 
-        id="message" 
-        placeholder="Enter a message!" 
-        value={message} 
-        onChange={e => setMessage(e.target.value)}
+    <>
+      <input
+        className={styles.draftArea}
+        id='name'
+        placeholder='Your Name'
+        value={name}
+        onChange={e => setName(e.target.value)}
       />
-    </form>
+      <textarea
+        className={styles.draftArea}
+        id='message'
+        placeholder='The link to your favorite song on spotify!'
+        value={draft}
+        onChange={e => setDraft(e.target.value)}
+      />
+    </>
   ) : (
-    <button className={styles.waveButton} onClick={connectWalletHandler}>
+    <button className={styles.draftButton} onClick={connectWalletHandler}>
       Connect Wallet
     </button>
   )
-  
+
+  //Formats all songs to
+  const songList = allSongs.map((song: SongContract, index) => {
+    return (
+      <div key={index}>
+        <div>Name of Submitter: {song.submittedby} </div>
+        <div>Address: {song.address}</div>
+        <div>Time: {song.timestamp.toUTCString()} </div>
+        <iframe title={song.url} src={song.url} width="100%" height="80" allow="encrypted-media"></iframe>
+      </div>
+    )
+  })
+
   return (
     <div className={styles.mainContainer}>
-
       <div className={styles.dataContainer}>
-        <div className={styles.header}>
-        👋 Hey there!
-        </div>
+        <div className={styles.header}>👋 Hey there!</div>
 
         <div className={styles.bio}>
-        <h1>
-        I am Sergio and I am in my last semester of my Software Engineering degree! 
-        </h1>
-        <br/>
-        For now, all you can do is wave at me and maybe win some sick fake ethereum. <br/>But I do enjoy the messages 🙂
-        <br/>
-        Soon you will be able to connect your etherium wallet and link me your favorite spotify music!
+          <h1>
+            I am Sergio and I am in my last semester of my Software Engineering
+            degree! This is my first project involving Web3 and Solidity!
+          </h1>
+          Link your ethereum wallet and send me your favorite spotify music!
         </div>
 
-        <button className={styles.waveButton} onClick={() => wave(message)}>
-          Wave at Me
+        <button className={styles.draftButton} onClick={() => addSong(draft, name)}>
+          Send me your favorite Spotify music!
         </button>
 
         {showConnectForm}
 
-
-        {allWaves.map((wave, index) => {
-          return (
-            <div key={index} style={{backgroundColor: "OldLace", marginTop: "16px", padding: "8px"}}> 
-              <div>Address: {wave.address}</div>
-              <div>Time: {wave.timestamp.toString()} </div>
-              <div>Message: {wave.message} </div>
-            </div>
-          )
-        })} 
+        {songList}
       </div>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
