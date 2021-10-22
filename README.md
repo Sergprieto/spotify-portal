@@ -1,6 +1,6 @@
 # View the updated site here:
 
-[Spotify Portal main branch](sergprieto.codes).
+[Spotify Portal main branch](http://www.sergprieto.codes).
 
 ## Available Scripts
 
