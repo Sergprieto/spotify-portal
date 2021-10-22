@@ -61,7 +61,6 @@ const formatURL = (url: string): string => {
     url = url.slice(0, insertIndex) + embed + url.slice(insertIndex+1)
   }
 
-  console.log(url)
   const queryIndex = url.indexOf('?')
   if (queryIndex < 0) return url
 
@@ -89,19 +88,3 @@ export const getAllSongs = async (): Promise<SongContract[]> => {
 
   return formatedSongs
 }
-
-// const listenToContract = async () => {
-//   const spotifyContract = await getSpotifyContract()
-
-//   spotifyContract.on('winnerWinner', (from, time) => {
-//     console.log('We got a winner!', from, time)
-//     const date = new Date(time * 1000)
-//     alert(
-//       'A winner has been selected! They are: ' +
-//         from +
-//         ' and they won at ' +
-//         date +
-//         ' give it up for them!'
-//     )
-//   })
-// }
