@@ -5,12 +5,12 @@ import "hardhat/console.sol";
 contract SpotifyPortal {
     uint256 totalSongs;
 
-    event newSong(address indexed from, uint256 timestamp, string name, string url);
+    event newSong(address indexed from, uint256 timestamp, string submittedBy, string url);
 
     struct Song {
         address addr;
         uint256 timestamp;
-        string name;
+        string submittedBy;
         string url;
     }
     Song[] songs;
@@ -21,7 +21,7 @@ contract SpotifyPortal {
         console.log("Construction complete!");
     }
 
-    function addSong(string memory _name, string memory _url) public {
+    function addSong(string memory _submittedBy, string memory _url) public {
         require(
             mostRecentSender[msg.sender] + 15 minutes < block.timestamp,
             "Wait 15m"
@@ -30,9 +30,9 @@ contract SpotifyPortal {
         mostRecentSender[msg.sender] = block.timestamp;
 
         totalSongs += 1;
-        console.log("%s at %s account sent us a song at %s url!", _name, msg.sender, _url);
-        songs.push(Song(msg.sender, block.timestamp, _name, _url));
-        emit newSong(msg.sender, block.timestamp, _name, _url);
+        console.log("%s at %s account sent us a song at %s url!", _submittedBy, msg.sender, _url);
+        songs.push(Song(msg.sender, block.timestamp, _submittedBy, _url));
+        emit newSong(msg.sender, block.timestamp, _submittedBy, _url);
 
     }
 

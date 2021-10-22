@@ -56,11 +56,11 @@ const App = () => {
   //Formats all songs to
   const songList = allSongs.map((song: SongContract, index) => {
     return (
-      <div key={index} className={styles.message}>
+      <div key={index}>
         <div>Name of Submitter: {song.submittedby} </div>
         <div>Address: {song.address}</div>
         <div>Time: {song.timestamp.toUTCString()} </div>
-        <div>Song URL: {song.url} </div>
+        <iframe title={song.url} src={song.url} width="100%" height="80" allow="encrypted-media"></iframe>
       </div>
     )
   })

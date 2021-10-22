@@ -8,7 +8,7 @@ export interface SongContract {
   submittedby: string
 }
 
-const contractAddress: any = '0x6759d847B645dc3D7e9Cf81e63A8F571Bda255e4'
+const contractAddress: any = '0xB52D54d625d74608893f5F894480cDeD456fccb1'
 const contractABI = spotifyArtifacts.abi
 
 export const connectWallet = async (): Promise<string> => {
@@ -31,14 +31,14 @@ const getSpotifyContract = async (): Promise<Contract> => {
   return new ethers.Contract(contractAddress, contractABI, signer)
 }
 
-export const addSong = async (url: string, submittedby: string) => {
+export const addSong = async (url: string, submittedBy: string) => {
   const spotifyContract = await getSpotifyContract()
 
   let count = await spotifyContract.getTotalSongs()
   console.log('Retrieved total message count...', count.toNumber())
 
   const messageTransaction: any = await spotifyContract.addSong(
-    submittedby,
+    submittedBy,
     formatURL(url),
     {
       gasLimit: 300000
@@ -53,6 +53,15 @@ export const addSong = async (url: string, submittedby: string) => {
 }
 
 const formatURL = (url: string): string => {
+  if (url.indexOf('embed') === -1) {
+    const embed = '/embed/'
+    const comIndex = url.indexOf('.com')
+    
+    const insertIndex = url.indexOf('/', comIndex)
+    url = url.slice(0, insertIndex) + embed + url.slice(insertIndex+1)
+  }
+
+  console.log(url)
   const queryIndex = url.indexOf('?')
   if (queryIndex < 0) return url
 
@@ -71,8 +80,8 @@ export const getAllSongs = async (): Promise<SongContract[]> => {
     formatedSongs.push({
       address: song.addr,
       timestamp: new Date(song.timestamp * 1000),
-      url: song.url,
-      submittedby: song.name
+      url: formatURL(song.url),
+      submittedby: song.submittedBy
     })
   })
 
