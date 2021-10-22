@@ -17,7 +17,6 @@ const App = () => {
     const walletArr = await connectWallet()
     if (walletArr) {
       setCurrentAccount(walletArr)
-      loadInitSongs()
     }
   }
 
@@ -28,6 +27,7 @@ const App = () => {
 
   useEffect(() => {
     document.title = 'Spotify Portal'
+    loadInitSongs()
   }, [])
 
   const showConnectForm = currAccount ? (
@@ -84,6 +84,10 @@ const App = () => {
 
         {showConnectForm}
 
+
+        <div className={styles.bio}>
+          Here are songs sent by others through the blockchain!
+        </div>
         {songList}
       </div>
     </div>
