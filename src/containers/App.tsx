@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 import styles from './App.module.css'
+import { SongContract } from '../utils/SongContract'
 import {
   addSong,
   getAllSongs,
   connectWallet,
-  SongContract,
   listenToUpdates
-} from '../utils/contractConnection'
+} from '../utils/ContractConnection'
 
 const App = () => {
   const [currAccount, setCurrentAccount] = useState('')

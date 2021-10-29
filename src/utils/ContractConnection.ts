@@ -1,12 +1,10 @@
 import * as spotifyArtifacts from './SpotifyPortal.json'
 import { ethers, Contract } from 'ethers'
+import {
+  SongContract,
+  formatURL
+} from './SongContract'
 
-export interface SongContract {
-  address: string
-  timestamp: Date
-  url: string
-  submittedby: string
-}
 
 const contractAddress: any = '0xB52D54d625d74608893f5F894480cDeD456fccb1'
 const contractABI = spotifyArtifacts.abi
@@ -57,20 +55,6 @@ export const addSong = async (url: string, submittedBy: string) => {
   console.log('Retrieved total song count', count.toNumber())
 }
 
-const formatURL = (url: string): string => {
-  if (url.indexOf('embed') === -1) {
-    const embed = '/embed/'
-    const comIndex = url.indexOf('.com')
-    
-    const insertIndex = url.indexOf('/', comIndex)
-    url = url.slice(0, insertIndex) + embed + url.slice(insertIndex+1)
-  }
-
-  const queryIndex = url.indexOf('?')
-  if (queryIndex < 0) return url
-
-  return url.slice(0, queryIndex)
-}
 
 export const getAllSongs = async (): Promise<SongContract[]> => {
   
