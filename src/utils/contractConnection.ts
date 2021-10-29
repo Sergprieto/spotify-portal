@@ -14,7 +14,7 @@ const contractABI = spotifyArtifacts.abi
 export const connectWallet = async (): Promise<string> => {
   const { ethereum }: any = window
   if (!ethereum) {
-    alert('Get metamask first to connect a wallet')
+    alert('Download the metamask extension to send a song through the blockchain!')
     return ''
   }
 
@@ -25,17 +25,22 @@ export const connectWallet = async (): Promise<string> => {
   return accounts[0]
 }
 
-const getSpotifyContract = async (): Promise<Contract> => {
+const getSignedContract = async (): Promise<Contract> => {
   const provider = new ethers.providers.Web3Provider((window as any).ethereum)
   const signer = provider.getSigner()
   return new ethers.Contract(contractAddress, contractABI, signer)
 }
 
+const getUnsignedContract = async (): Promise<ethers.Contract> => {
+  const alchemyProvider = new ethers.providers.AlchemyProvider('rinkeby')
+  return new ethers.Contract(contractAddress, spotifyArtifacts.abi, alchemyProvider)
+}
+
 export const addSong = async (url: string, submittedBy: string) => {
-  const spotifyContract = await getSpotifyContract()
+  const spotifyContract = await getSignedContract()
 
   let count = await spotifyContract.getTotalSongs()
-  console.log('Retrieved total message count...', count.toNumber())
+  console.log('Retrieved total song count...', count.toNumber())
 
   const messageTransaction: any = await spotifyContract.addSong(
     submittedBy,
@@ -68,10 +73,9 @@ const formatURL = (url: string): string => {
 }
 
 export const getAllSongs = async (): Promise<SongContract[]> => {
-  const spotifyContract = await getSpotifyContract()
-
+  
+  const spotifyContract = await getUnsignedContract()
   const songs: any[] = await spotifyContract.getAllSongs()
-  console.log(songs)
 
   const formatedSongs: SongContract[] = []
 
@@ -84,7 +88,18 @@ export const getAllSongs = async (): Promise<SongContract[]> => {
     })
   })
 
-  // await listenToContract()
-
   return formatedSongs
+}
+
+export const listenToUpdates = async (setAllSongs: Function) => {
+  const spotifyContract = await getUnsignedContract()
+  spotifyContract.on('newSong', (from, timestamp, submittedBy, url) => {
+    const newestSong: SongContract = {
+      address: from,
+      timestamp: new Date(timestamp * 1000),
+      url: formatURL(url),
+      submittedby: submittedBy
+    }
+    setAllSongs((oldSongList: SongContract[]) => [...oldSongList, newestSong])
+  })
 }

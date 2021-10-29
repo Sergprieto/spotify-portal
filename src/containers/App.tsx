@@ -4,30 +4,33 @@ import {
   addSong,
   getAllSongs,
   connectWallet,
-  SongContract
+  SongContract,
+  listenToUpdates
 } from '../utils/contractConnection'
 
 const App = () => {
   const [currAccount, setCurrentAccount] = useState('')
   const [draft, setDraft] = useState('')
   const [name, setName] = useState('')
-  const [allSongs, setAllSongs] = useState<any[]>([])
+  const [allSongs, setAllSongs] = useState<SongContract[]>([])
 
   const connectWalletHandler = async () => {
     const walletArr = await connectWallet()
     if (walletArr) {
       setCurrentAccount(walletArr)
-      loadInitSongs()
     }
   }
 
   const loadInitSongs = async () => {
     const initialSongs = await getAllSongs()
     setAllSongs(initialSongs)
+    
   }
 
   useEffect(() => {
     document.title = 'Spotify Portal'
+    loadInitSongs()
+    listenToUpdates(setAllSongs)
   }, [])
 
   const showConnectForm = currAccount ? (
