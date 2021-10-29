@@ -1,33 +1,36 @@
 import { useState, useEffect } from 'react'
 import styles from './App.module.css'
+import { SongContract } from '../utils/SongContract'
 import {
   addSong,
   getAllSongs,
   connectWallet,
-  SongContract
-} from '../utils/contractConnection'
+  listenToUpdates
+} from '../utils/ContractConnection'
 
 const App = () => {
   const [currAccount, setCurrentAccount] = useState('')
   const [draft, setDraft] = useState('')
   const [name, setName] = useState('')
-  const [allSongs, setAllSongs] = useState<any[]>([])
+  const [allSongs, setAllSongs] = useState<SongContract[]>([])
 
   const connectWalletHandler = async () => {
     const walletArr = await connectWallet()
     if (walletArr) {
       setCurrentAccount(walletArr)
-      loadInitSongs()
     }
   }
 
   const loadInitSongs = async () => {
     const initialSongs = await getAllSongs()
     setAllSongs(initialSongs)
+    
   }
 
   useEffect(() => {
     document.title = 'Spotify Portal'
+    loadInitSongs()
+    listenToUpdates(setAllSongs)
   }, [])
 
   const showConnectForm = currAccount ? (
