@@ -1,4 +1,4 @@
-# [Spotify Portal](http://www.sergprieto.codes)  - Share your favorite songs from Spotify.
+# [Spotify Portal](http://www.sergprieto.codes)  - Share your favorite songs from Spotify
 
 Simple site to share Spotify songs via the blockchain. Created with Typescript, EthersJS, ReactJS for the frontend. Solidity and HardHat used to develop the backend.
 
@@ -36,7 +36,7 @@ This project was intially based on a tutorial on [buildspace](buildspace.so).
 
 # Future Steps
 - Add more elegant error handling to sending a song link.
-- Improve UX to viewing the Song list
+- Improve UX to viewing the Song list.
 - Add loading animation when sending a new song via the blockchain.
 
 # License
