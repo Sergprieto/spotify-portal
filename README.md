@@ -32,7 +32,7 @@ $ yarn start
 ```
 # Inspiration
 
-This project was intially based on a tutorial on [buildspace](buildspace.so).
+This project was intially based on a tutorial on [buildspace](https://buildspace.so).
 
 # Future Steps
 - Add more elegant error handling to sending a song link.
