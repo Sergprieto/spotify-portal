@@ -6,7 +6,7 @@ import {
 } from './SongContract'
 
 
-const contractAddress: any = '0xB52D54d625d74608893f5F894480cDeD456fccb1'
+const contractAddress: any = '0x96438C1FaE1c625F24c04915E5a3b8B9C4350D2c'
 const contractABI = spotifyArtifacts.abi
 
 export const connectWallet = async (): Promise<string> => {
